@@ -12,43 +12,33 @@ const gameBoard = (function () {
 
   const getBoard = () => board;
 
-  const placeToken = (column, player) => {
-    const availableCells = board
-      .filter((row) => row[column].getValue() === 0)
-      .map((row) => row[column]);
+  const placeToken = (row, column, player) => {
+    if (board[row][column].getValue() !== "") return;
 
-    // If no cells make it through the filter,
-    // the move is invalid. Stop execution.
-    if (!availableCells.length) return;
-
-    // Otherwise, I have a valid cell, the last one in the filtered array
-    const lowestRow = availableCells.length - 1;
-    board[lowestRow][column].addToken(player);
-
-    gameBoard.printBoard();
+    board[row][column].addToken(player);
   };
 
   const printBoard = () => {
     const boardWithCellValues = board.map((row) =>
       row.map((cell) => cell.getValue())
     );
-    console.log(boardWithCellValues);
+    return boardWithCellValues.flat();
   };
 
-  // Here, we provide an interface for the rest of our
-  // application to interact with the board
-  return { getBoard, placeToken, printBoard };
+  return {
+    getBoard,
+    placeToken,
+    printBoard,
+  };
 })();
 
 function Cell() {
-  let value = 0;
+  let value = "";
 
-  // Accept a player's token to change the value of the cell
   const addToken = (player) => {
     value = player;
   };
 
-  // How we will retrieve the current value of this cell through closure
   const getValue = () => value;
 
   return {
@@ -57,4 +47,115 @@ function Cell() {
   };
 }
 
-gameBoard.printBoard();
+function GameController(playerOne, playerTwo) {
+  const players = [
+    {
+      name: playerOne,
+      token: "X",
+    },
+    {
+      name: playerTwo,
+      token: "O",
+    },
+  ];
+
+  let activePlayer = players[0];
+
+  const switchTurn = () => {
+    activePlayer = activePlayer === players[0] ? players[1] : players[0];
+  };
+
+  const getActivePlayer = () => activePlayer;
+
+  const printNewRound = () => {
+    gameBoard.printBoard();
+    console.log(`${getActivePlayer().name}'s turn.`);
+  };
+
+  const playRound = (row, column) => {
+    console.log(
+      `Placing ${
+        getActivePlayer().name
+      }'s token into position ${row}, ${column}...`
+    );
+    gameBoard.placeToken(row, column, getActivePlayer().token);
+
+    // WinCheck();
+
+    switchTurn();
+    printNewRound();
+  };
+
+  printNewRound();
+
+  return {
+    playRound,
+    getActivePlayer,
+    getBoard: gameBoard.getBoard,
+  };
+}
+
+function ScreenController() {
+  const game = GameController("X", "O");
+  const playerTurnDiv = document.querySelector(".turn");
+  const boardDiv = document.querySelector(".board");
+
+  const updateScreen = () => {
+    boardDiv.textContent = "";
+
+    const board = game.getBoard();
+    const activePlayer = game.getActivePlayer();
+
+    playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+
+    board.forEach((row, zIndex) => {
+      row.forEach((cell, index) => {
+        const cellButton = document.createElement("button");
+        cellButton.classList.add("cell");
+        cellButton.dataset.row = zIndex;
+        cellButton.dataset.column = index;
+
+        cellButton.textContent = cell.getValue();
+
+        boardDiv.appendChild(cellButton);
+      });
+    });
+  };
+
+  function clickHandlerBoard(e) {
+    const selectedRow = e.target.dataset.row;
+    const selectedColumn = e.target.dataset.column;
+    if (!selectedRow || !selectedColumn) return;
+    game.playRound(selectedRow, selectedColumn);
+
+    updateScreen();
+  }
+  boardDiv.addEventListener("click", clickHandlerBoard);
+
+  updateScreen();
+}
+/*
+function WinCheck() {
+  const winConditions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6],
+  ];
+
+  const boardArray = gameBoard.printBoard();
+  let tempArray = [];
+
+  for (let i = 0; i < boardArray.length; i++) {
+    if (boardArray.includes("X", i)) {
+      tempArray.push(boardArray.indexOf("X", i));
+    }
+  }
+  console.log(tempArray);
+}
+*/
+ScreenController();
