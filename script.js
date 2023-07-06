@@ -80,7 +80,7 @@ function GameController(playerOne, playerTwo) {
     );
     gameBoard.placeToken(row, column, getActivePlayer().token);
 
-    // WinCheck();
+    WinCheck();
 
     switchTurn();
     printNewRound();
@@ -134,7 +134,6 @@ function ScreenController() {
 
   updateScreen();
 }
-/*
 function WinCheck() {
   const winConditions = [
     [0, 1, 2],
@@ -147,15 +146,24 @@ function WinCheck() {
     [2, 4, 6],
   ];
 
-  const boardArray = gameBoard.printBoard();
-  let tempArray = [];
+  const xArray = gameBoard.printBoard().reduce((r, n, i) => {
+    n === "X" && r.push(i);
+    return r;
+  }, []);
 
-  for (let i = 0; i < boardArray.length; i++) {
-    if (boardArray.includes("X", i)) {
-      tempArray.push(boardArray.indexOf("X", i));
-    }
-  }
-  console.log(tempArray);
+  const oArray = gameBoard.printBoard().reduce((r, n, i) => {
+    n === "O" && r.push(i);
+    return r;
+  }, []);
+
+  winConditions.forEach((i) => {
+    let xFilter = xArray.filter((element) => i.includes(element));
+    let oFilter = oArray.filter((element) => i.includes(element));
+
+    if (xFilter.toString() === i.toString()) console.log("you win!");
+    else if (oFilter.toString() === i.toString())
+      console.log("sorry, you lose!");
+  });
 }
-*/
+
 ScreenController();
