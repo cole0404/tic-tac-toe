@@ -67,26 +67,13 @@ function GameController(playerOne, playerTwo) {
 
   const getActivePlayer = () => activePlayer;
 
-  const printNewRound = () => {
-    gameBoard.printBoard();
-    console.log(`${getActivePlayer().name}'s turn.`);
-  };
-
   const playRound = (row, column) => {
-    console.log(
-      `Placing ${
-        getActivePlayer().name
-      }'s token into position ${row}, ${column}...`
-    );
     gameBoard.placeToken(row, column, getActivePlayer().token);
 
-    WinCheck();
+    isVictory();
 
     switchTurn();
-    printNewRound();
   };
-
-  printNewRound();
 
   return {
     playRound,
@@ -99,6 +86,8 @@ function ScreenController() {
   const game = GameController("X", "O");
   const playerTurnDiv = document.querySelector(".turn");
   const boardDiv = document.querySelector(".board");
+  const singleButton = document.querySelector("#single");
+  const multiButton = document.querySelector("#multi");
 
   const updateScreen = () => {
     boardDiv.textContent = "";
@@ -107,6 +96,11 @@ function ScreenController() {
     const activePlayer = game.getActivePlayer();
 
     playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
+    if (isVictory().getWinCheck() === true) {
+      playerTurnDiv.textContent = `X wins!`;
+    } else if (isVictory().getWinCheck() === false) {
+      playerTurnDiv.textContent = `O wins!`;
+    }
 
     board.forEach((row, zIndex) => {
       row.forEach((cell, index) => {
@@ -116,11 +110,20 @@ function ScreenController() {
         cellButton.dataset.column = index;
 
         cellButton.textContent = cell.getValue();
-
+        if (cellButton.textContent === "X") {
+          cellButton.classList.add("x");
+        } else if (cellButton.textContent === "O") {
+          cellButton.classList.add("o");
+        }
         boardDiv.appendChild(cellButton);
       });
     });
   };
+
+  function clearPopup() {
+    document.getElementById("popup").style.display = "none";
+    document.getElementById("invisible").style.display = "none";
+  }
 
   function clickHandlerBoard(e) {
     const selectedRow = e.target.dataset.row;
@@ -130,11 +133,15 @@ function ScreenController() {
 
     updateScreen();
   }
+  multiButton.addEventListener("click", clearPopup);
   boardDiv.addEventListener("click", clickHandlerBoard);
 
   updateScreen();
 }
-function WinCheck() {
+
+function isVictory() {
+  let winCheck;
+
   const winConditions = [
     [0, 1, 2],
     [3, 4, 5],
@@ -160,10 +167,14 @@ function WinCheck() {
     let xFilter = xArray.filter((element) => i.includes(element));
     let oFilter = oArray.filter((element) => i.includes(element));
 
-    if (xFilter.toString() === i.toString()) console.log("you win!");
-    else if (oFilter.toString() === i.toString())
-      console.log("sorry, you lose!");
+    if (xFilter.toString() === i.toString()) winCheck = true;
+    else if (oFilter.toString() === i.toString()) winCheck = false;
   });
+  const getWinCheck = () => winCheck;
+
+  return {
+    getWinCheck,
+  };
 }
 
 ScreenController();

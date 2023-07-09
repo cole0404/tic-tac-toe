@@ -135,16 +135,22 @@ table {
 }
 
 /* my css here */
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background: lightyellow;
+}
+
 .board {
     display: grid;
     height: 500px;
     width: 500px;
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: repeat(3, 1fr);
-    border: 1px solid black;
-    gap: 2px;
-    padding: 2px;
-    background-color: yellow;
+    gap: 4px;
+    background-color: black;
 }
 
 .cell {
@@ -153,7 +159,52 @@ table {
     align-items: center;
     text-align: center;
     font-size: 2rem;
-    border: 1px solid grey;
     background: lightyellow;
     cursor: pointer;
+    border: none;
+}
+
+.cell:hover {
+    opacity: 92%;
+}
+
+.turn {
+    font-size: 1.5em;
+    padding: 1em 0em;
+}
+
+#popup {
+    display: grid;
+    flex-direction: column;
+    row-gap: 1em;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    padding: 4em;
+    font-size: 1.5em;
+    background: #ef5a5a;
+    border-radius: 12px;
+    box-shadow: 3px 4px 2px -2px maroon
+}
+
+#invisible {
+    position: fixed;
+    display: block;
+    top: 0%;
+    left: 0%;
+    height: 100vh;
+    width: 100vw;
+    z-index: 2;
+    background-color: black;
+    opacity: 20%;
+}
+
+.x {
+    color: red;
+}
+
+.o {
+    color: blue;
 }
