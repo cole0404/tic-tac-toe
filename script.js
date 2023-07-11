@@ -41,9 +41,12 @@ function Cell() {
 
   const getValue = () => value;
 
+  const clearValue = () => (value = "");
+
   return {
     addToken,
     getValue,
+    clearValue,
   };
 }
 
@@ -88,19 +91,23 @@ function ScreenController() {
   const boardDiv = document.querySelector(".board");
   const singleButton = document.querySelector("#single");
   const multiButton = document.querySelector("#multi");
+  const resetButton = document.createElement("button");
 
   const updateScreen = () => {
     boardDiv.textContent = "";
 
     const board = game.getBoard();
     const activePlayer = game.getActivePlayer();
+    const winCheck = isVictory().getWinCheck();
 
     playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
-    if (isVictory().getWinCheck() === true) {
+    if (winCheck === true) {
       playerTurnDiv.textContent = `X wins!`;
-    } else if (isVictory().getWinCheck() === false) {
+    } else if (winCheck === false) {
       playerTurnDiv.textContent = `O wins!`;
     }
+
+    if (winCheck === true || false) addResetButton();
 
     board.forEach((row, zIndex) => {
       row.forEach((cell, index) => {
@@ -123,6 +130,28 @@ function ScreenController() {
   function clearPopup() {
     document.getElementById("popup").style.display = "none";
     document.getElementById("invisible").style.display = "none";
+  }
+
+  function addResetButton() {
+    resetButton.classList.add("reset");
+    resetButton.textContent = `Click here to restart`;
+    playerTurnDiv.append(resetButton);
+    resetButton.addEventListener("click", resetGame);
+  }
+
+  function resetGame() {
+    const board = game.getBoard();
+    document.getElementById("popup").style.display = "grid";
+    document.getElementById("invisible").style.display = "block";
+    resetButton.remove();
+    // clear values from array somehow
+    board.forEach((row) => {
+      row.forEach((cell) => {
+        cell.clearValue();
+      });
+    });
+
+    updateScreen();
   }
 
   function clickHandlerBoard(e) {

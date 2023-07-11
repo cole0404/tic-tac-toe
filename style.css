@@ -158,14 +158,16 @@ body {
     justify-content: center;
     align-items: center;
     text-align: center;
-    font-size: 2rem;
+    font-size: 3rem;
     background: lightyellow;
     cursor: pointer;
     border: none;
+    transition: 0.5s;
 }
 
 .cell:hover {
     opacity: 92%;
+    
 }
 
 .turn {
