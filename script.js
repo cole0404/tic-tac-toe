@@ -68,6 +68,10 @@ function GameController(playerOne, playerTwo) {
     activePlayer = activePlayer === players[0] ? players[1] : players[0];
   };
 
+  const resetPlayer = () => {
+    activePlayer = players[0];
+  };
+
   const getActivePlayer = () => activePlayer;
 
   const playRound = (row, column) => {
@@ -81,6 +85,7 @@ function GameController(playerOne, playerTwo) {
   return {
     playRound,
     getActivePlayer,
+    resetPlayer,
     getBoard: gameBoard.getBoard,
   };
 }
@@ -101,13 +106,13 @@ function ScreenController() {
     const winCheck = isVictory().getWinCheck();
 
     playerTurnDiv.textContent = `${activePlayer.name}'s turn...`;
-    if (winCheck === true) {
+    if (winCheck === "win") {
       playerTurnDiv.textContent = `X wins!`;
-    } else if (winCheck === false) {
+    } else if (winCheck === "lose") {
       playerTurnDiv.textContent = `O wins!`;
     }
 
-    if (winCheck === true || false) addResetButton();
+    if (winCheck === "win" || winCheck === "lose") addResetButton();
 
     board.forEach((row, zIndex) => {
       row.forEach((cell, index) => {
@@ -133,6 +138,7 @@ function ScreenController() {
   }
 
   function addResetButton() {
+    document.getElementById("invisible").style.display = "block";
     resetButton.classList.add("reset");
     resetButton.textContent = `Click here to restart`;
     playerTurnDiv.append(resetButton);
@@ -142,9 +148,8 @@ function ScreenController() {
   function resetGame() {
     const board = game.getBoard();
     document.getElementById("popup").style.display = "grid";
-    document.getElementById("invisible").style.display = "block";
     resetButton.remove();
-    // clear values from array somehow
+    game.resetPlayer();
     board.forEach((row) => {
       row.forEach((cell) => {
         cell.clearValue();
@@ -196,8 +201,8 @@ function isVictory() {
     let xFilter = xArray.filter((element) => i.includes(element));
     let oFilter = oArray.filter((element) => i.includes(element));
 
-    if (xFilter.toString() === i.toString()) winCheck = true;
-    else if (oFilter.toString() === i.toString()) winCheck = false;
+    if (xFilter.toString() === i.toString()) winCheck = "win";
+    else if (oFilter.toString() === i.toString()) winCheck = "lose";
   });
   const getWinCheck = () => winCheck;
 
