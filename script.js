@@ -110,6 +110,8 @@ function ScreenController() {
       playerTurnDiv.textContent = `X wins!`;
     } else if (winCheck === "lose") {
       playerTurnDiv.textContent = `O wins!`;
+    } else if (winCheck === "tie") {
+      playerTurnDiv.textContent = "Tie, nobody wins!";
     }
 
     if (winCheck === "win" || winCheck === "lose") addResetButton();
@@ -197,15 +199,20 @@ function isVictory() {
     return r;
   }, []);
 
+  const boardCells = () =>
+    gameBoard.getBoard().map((row) => row.map((cell) => cell.getValue()));
+
   winConditions.forEach((i) => {
     let xFilter = xArray.filter((element) => i.includes(element));
     let oFilter = oArray.filter((element) => i.includes(element));
 
-    if (xFilter.toString() === i.toString()) winCheck = "win";
-    else if (oFilter.toString() === i.toString()) winCheck = "lose";
+    if (xFilter.toString() === i.toString()) {
+      winCheck = "win";
+    } else if (oFilter.toString() === i.toString()) {
+      winCheck = "lose";
+    } else if (boardCells().flat().indexOf("") === -1) console.log("!");
   });
   const getWinCheck = () => winCheck;
-
   return {
     getWinCheck,
   };
