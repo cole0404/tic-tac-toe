@@ -177,6 +177,8 @@ function ScreenController() {
 
 function isVictory() {
   let winCheck;
+  let xFilter = [];
+  let oFilter = [];
 
   const winConditions = [
     [0, 1, 2],
@@ -203,15 +205,21 @@ function isVictory() {
     gameBoard.getBoard().map((row) => row.map((cell) => cell.getValue()));
 
   winConditions.forEach((i) => {
-    let xFilter = xArray.filter((element) => i.includes(element));
-    let oFilter = oArray.filter((element) => i.includes(element));
-
-    if (xFilter.toString() === i.toString()) {
-      winCheck = "win";
-    } else if (oFilter.toString() === i.toString()) {
-      winCheck = "lose";
-    } else if (boardCells().flat().indexOf("") === -1) console.log("!");
+    xFilter.push(xArray.filter((element) => i.includes(element)));
+    oFilter.push(oArray.filter((element) => i.includes(element)));
   });
+
+  xFilter.forEach((i) => {
+    if (i.length === 3) winCheck = "win";
+  });
+
+  oFilter.forEach((i) => {
+    if (i.length === 3) winCheck = "lose";
+  });
+
+  if (boardCells().flat().indexOf("") === -1) {
+    if (winCheck === undefined) winCheck = "tie";
+  }
   const getWinCheck = () => winCheck;
   return {
     getWinCheck,
