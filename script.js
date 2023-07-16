@@ -114,7 +114,8 @@ function ScreenController() {
       playerTurnDiv.textContent = "Tie, nobody wins!";
     }
 
-    if (winCheck === "win" || winCheck === "lose") addResetButton();
+    if (winCheck === "win" || winCheck === "lose" || winCheck === "tie")
+      addResetButton();
 
     board.forEach((row, zIndex) => {
       row.forEach((cell, index) => {
